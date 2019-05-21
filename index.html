@@ -319,29 +319,20 @@
 
       
         
-          
-            <p><strong>作者：光环云  马立刚</strong>  </p>
-<h4 id="Java-访问Aurora"><a href="#Java-访问Aurora" class="headerlink" title="Java 访问Aurora"></a>Java 访问Aurora</h4><p>以下是使用mysql-connector 连接Aurora for mysql参考示例：</p>
-<p>Workbench 访问Aurora，跟mysql方式一致，如：<br>Aurora.example.rds.cn-northwest-1.amazonaws.com.cn<br>用户名：root<br>密码：root</p>
-<p><img src="/2019/05/16/Java-AuroraMysql/01.png" alt="01"></p>
-<p>Eclipse 开发首先在maven添加依赖，如下：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;mysql&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;8.0.15&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+          <p class="description">Aurora是Amazon在2014 AWS re:Invent大会上推出的一款全新关系数据库，提供商业级的服务可用性和数据可靠性，相比MySQL有5倍的性能提升，并基于RDS 提供自动化运维和管理</p>
 
-<p>源代码：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">package Aurora.test;</span><br><span class="line">import java.sql.Connection;</span><br><span class="line">import java.sql.DriverManager;</span><br><span class="line">import java.sql.ResultSet;</span><br><span class="line">import java.sql.SQLException;</span><br><span class="line">import java.sql.Statement;</span><br><span class="line">public class ConnectAurora &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		// TODO Auto-generated method stub</span><br><span class="line">				        //声明Connection对象</span><br><span class="line">				        Connection con;</span><br><span class="line">				        String driver = &quot;com.mysql.cj.jdbc.Driver&quot;;</span><br><span class="line">				        //URL指向要访问的数据库名mydata</span><br><span class="line">				        String url = &quot;jdbc:mysql:// Aurora.example.rds.cn-northwest-1.amazonaws.com.cn:3306/db3&quot;;</span><br><span class="line">				        //MySQL配置时的用户名</span><br><span class="line">				        String user = &quot;root&quot;;</span><br><span class="line">				        //MySQL配置时的密码</span><br><span class="line">				        String password = &quot;root&quot;;</span><br><span class="line">				        //遍历查询结果集</span><br><span class="line">				        try &#123;</span><br><span class="line">				            //加载驱动程序</span><br><span class="line">				            Class.forName(driver);</span><br><span class="line">				            //1.getConnection()方法，连接MySQL数据库！！</span><br><span class="line">				            con = DriverManager.getConnection(url,user,password);</span><br><span class="line">				            if(!con.isClosed())</span><br><span class="line">				                System.out.println(&quot;Succeeded connecting to the Database!&quot;);</span><br><span class="line">				            //2.创建statement类对象，用来执行SQL语句！！</span><br><span class="line">				            Statement statement = con.createStatement();</span><br><span class="line">				            //要执行的SQL语句</span><br><span class="line">				            String sql = &quot;select * from fileindex&quot;;</span><br><span class="line">				            //3.ResultSet类，用来存放获取的结果集！！</span><br><span class="line">				            ResultSet rs = statement.executeQuery(sql);</span><br><span class="line">				            System.out.println(&quot;-----------------------------------------------------------------------------------------------&quot;);		         </span><br><span class="line">				            System.out.println(&quot;------------------------------------------------------------------------------------------------&quot;);  </span><br><span class="line">				            System.out.println(&quot;| &quot;+ &quot;id&quot; + &quot;\t&quot; +&quot; | &quot;+ &quot;app_id&quot;+  &quot;\t&quot; +&quot; | &quot;+  &quot;文件名字&quot;+ &quot;\t&quot; +&quot; | &quot; + &quot;文件地址&quot;+ &quot;\t&quot; +&quot; | &quot;);  </span><br><span class="line">				            System.out.println(&quot;------------------------------------------------------------------------------------------------&quot;);  			             </span><br><span class="line">				            String APP_ID = null;</span><br><span class="line">				            String id = null;</span><br><span class="line">				            String address = null;</span><br><span class="line">				            String school = null;</span><br><span class="line">				            while(rs.next())&#123;</span><br><span class="line">				                //获取stuname这列数据</span><br><span class="line">				                id = rs.getString(&quot;ID&quot;);</span><br><span class="line">				                //获取stuid这列数据</span><br><span class="line">				                APP_ID = rs.getString(&quot;APP_ID&quot;);</span><br><span class="line">		                        address= rs.getString(&quot;File_Name&quot;);</span><br><span class="line">		                        school=rs.getString(&quot;File_url&quot;);</span><br><span class="line">				                //输出结果</span><br><span class="line">				                System.out.println(&quot; | &quot;+id + &quot;\t&quot; +&quot; | &quot;+ APP_ID +&quot; | &quot;+ &quot;\t&quot; +&quot; | &quot;+address +&quot; | &quot;+ &quot;\t&quot; +&quot; | &quot;+school +&quot; | &quot; );</span><br><span class="line">				                System.out.println(&quot; ------------------------------------------------------------------&quot;);  </span><br><span class="line">				            &#125;</span><br><span class="line">				            rs.close();</span><br><span class="line">				            con.close();</span><br><span class="line">				        &#125; catch(ClassNotFoundException e) &#123;   </span><br><span class="line">				            //数据库驱动类异常处理</span><br><span class="line">				            System.out.println(&quot;Sorry,can`t find the Driver!&quot;);   </span><br><span class="line">				            e.printStackTrace();   </span><br><span class="line">				            &#125; catch(SQLException e) &#123;</span><br><span class="line">				            //数据库连接失败异常处理</span><br><span class="line">				            e.printStackTrace();  </span><br><span class="line">				            &#125;catch (Exception e) &#123;</span><br><span class="line">				            // TODO: handle exception</span><br><span class="line">				            e.printStackTrace();</span><br><span class="line">				        &#125;finally&#123;</span><br><span class="line">				           System.out.println(&quot;数据库数据成功获取！&quot;);</span><br><span class="line">				        &#125;</span><br><span class="line">				    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Workbench 查询：  </p>
-<p><img src="/2019/05/16/Java-AuroraMysql/02.png" alt="在这里插入图片描述"></p>
-<p>Java 查询结果：  </p>
-<p><img src="/2019/05/16/Java-AuroraMysql/03.png" alt="在这里插入图片描述">  </p>
-<hr>
-<p><strong>关于光环云</strong><br>光环云是AWS服务在华推广机构，是一家由光环新网组建的独立业务部门公司。它开发、组建、运营一个全国的云生态系统，以促进、支持AWS服务广大客户，包括开发者、初业创公司、互联网企业、社会与政府机构，以及ICT服务商。</p>
-<p><strong>关于光环云社群</strong><br>光环云社群是光环云生态伙伴计划，致力于与推广者实现普惠科技，以社会化营销驱动云端生态。<br>加入光环云社群后将获得AWS产品推广返现、AWS认证优惠、技术文章获取等特权，并得到光环云多项权益赋能支持。</p>
-<p>微信搜索“光环云社群”或扫描下方二维码，获取更多资讯。</p>
-<p><img src="/2019/05/16/Java-AuroraMysql/%E6%8E%A8%E5%B9%BF%E4%BA%8C%E7%BB%B4%E7%A0%81.png" alt="在这里插入图片描述">   </p>
-<p>最终解释权归光环云数据有限公司！</p>
+<img src="/2019/05/16/Java-AuroraMysql/aurora.jpg" alt style="width:100%">
 
           
+          
+        
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/05/16/Java-AuroraMysql/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -458,7 +449,11 @@
 
       
         
-          <h1 id="一级标题"><a href="#一级标题" class="headerlink" title="一级标题"></a>一级标题</h1><h2 id="二级标题"><a href="#二级标题" class="headerlink" title="二级标题"></a>二级标题</h2><h3 id="三级标题"><a href="#三级标题" class="headerlink" title="三级标题"></a>三级标题</h3><h4 id="四级标题"><a href="#四级标题" class="headerlink" title="四级标题"></a>四级标题</h4>
+          <p class="description">用于练习md语法，仅做记录</p>
+
+          
+          
+        
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/05/15/md语法练习/#more" rel="contents">
@@ -560,7 +555,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
