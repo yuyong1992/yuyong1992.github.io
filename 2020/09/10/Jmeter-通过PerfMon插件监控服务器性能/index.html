@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="性能测试,jmeter,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在我们进行性能测试时，需要监控服务器性能的表现情况，以分析性能瓶颈，找出性能问题的原因。本篇文章介绍的是使用jmeter的PerfMon插件对服务器性能进行监控的配置过程。">
+<meta name="keywords" content="性能测试,jmeter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jmeter-通过PerfMon插件监控服务器性能">
+<meta property="og:url" content="http://yoursite.com/2020/09/10/Jmeter-通过PerfMon插件监控服务器性能/index.html">
+<meta property="og:site_name" content="Ofish&#39;s Home">
+<meta property="og:description" content="在我们进行性能测试时，需要监控服务器性能的表现情况，以分析性能瓶颈，找出性能问题的原因。本篇文章介绍的是使用jmeter的PerfMon插件对服务器性能进行监控的配置过程。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2020/09/10/Jmeter-通过PerfMon插件监控服务器性能/jmeter.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-38-24.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-39-12.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-39-52.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-41-21.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-42-23.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-42-57.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-43-10.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-43-23.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-44-30.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-54-44.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-04-09.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-06-15.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-11-17.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-11-57.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-13-42.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-13-53.png">
+<meta property="og:updated_time" content="2020-09-10T09:12:22.070Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jmeter-通过PerfMon插件监控服务器性能">
+<meta name="twitter:description" content="在我们进行性能测试时，需要监控服务器性能的表现情况，以分析性能瓶颈，找出性能问题的原因。本篇文章介绍的是使用jmeter的PerfMon插件对服务器性能进行监控的配置过程。">
+<meta name="twitter:image" content="http://yoursite.com/2020/09/10/Jmeter-通过PerfMon插件监控服务器性能/jmeter.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/09/10/Jmeter-通过PerfMon插件监控服务器性能/">
+
+
+
+
+
+  <title>Jmeter-通过PerfMon插件监控服务器性能 | Ofish's Home</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ofish's Home</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/10/Jmeter-通过PerfMon插件监控服务器性能/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="余永">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/image/head_picture.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ofish's Home">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Jmeter-通过PerfMon插件监控服务器性能</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-10T16:24:01+08:00">
+                2020-09-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/性能测试/" itemprop="url" rel="index">
+                    <span itemprop="name">性能测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p class="description">在我们进行性能测试时，需要监控服务器性能的表现情况，以分析性能瓶颈，找出性能问题的原因。本篇文章介绍的是使用jmeter的PerfMon插件对服务器性能进行监控的配置过程。</p>
+
+<img src="/2020/09/10/Jmeter-通过PerfMon插件监控服务器性能/jmeter.jpg" alt style="width:100%">
+
+<a id="more"></a>
+
+
+<h3 id="安装jmeter-perfmon插件"><a href="#安装jmeter-perfmon插件" class="headerlink" title="安装jmeter perfmon插件"></a>安装jmeter perfmon插件</h3><ol>
+<li><p>启动本地jmeter</p>
+</li>
+<li><p>点击“选项-Plugins Manager”。如果没有Plugins Manager，就需要到官网下载Plugins Manager的jar包进行安装：<a href="https://jmeter-plugins.org/wiki/PluginsManager/" target="_blank" rel="noopener">https://jmeter-plugins.org/wiki/PluginsManager/</a><br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-38-24.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-38-24"></p>
+</li>
+<li><p>搜索并安装perfmon插件，安装完成会自动重启jmeter。<br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-39-12.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-39-12"></p>
+</li>
+<li><p>重启完成后，添加监听器就会多出来perfmon的监听器了。<br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-39-52.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-39-52"></p>
+</li>
+</ol>
+<h3 id="在服务器上安装serveragent代理工具"><a href="#在服务器上安装serveragent代理工具" class="headerlink" title="在服务器上安装serveragent代理工具"></a>在服务器上安装serveragent代理工具</h3><ol>
+<li><p>下载serveragent：<a href="https://github.com/undera/perfmon-agent/blob/master/README.md#supported-metrics" target="_blank" rel="noopener">https://github.com/undera/perfmon-agent/blob/master/README.md#supported-metrics</a></p>
+</li>
+<li><p>安装serveragent：将下载的serveragent压缩包上传到服务器并解压。</p>
+</li>
+<li><p>关闭服务器的防火墙。</p>
+</li>
+<li><p>server agent的默认端口是4444，先查看服务器4444端口是否被占用。<br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-41-21.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-41-21"></p>
+</li>
+<li><p>如果4444端口被占用，在启动server agent时重新指定端口：$ sh startAgent.sh –tcp-port 3450；如果4444端口没有被占用，直接启动server agent 就可以：$ sh startAgent.sh 。（如果是Windows服务器，直接运行startAgent.bat就可以）</p>
+</li>
+<li><p>验证server agent 安装是否成功。<br>在JMeter压力机使用telnet像ServerAgent发送“test”，如telnet 192.168.18.10 4444，连通后，输入test，正常情况下ServerAgent会输出类似INFO    2019-10-08 13:54:40.733 [kg.apc.p] (): Yep, we received the ‘test’ command的日志。注：有可能如果压力机是Windows系统，有可能没有安装telnet工具，需要去“程序和功能-启用或关闭Windows功能”中开启。<br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-42-23.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-42-23"><br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-42-57.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-42-57"><br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-43-10.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-43-10"><br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-43-23.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-43-23"></p>
+</li>
+</ol>
+<h3 id="配置jmeter监控项"><a href="#配置jmeter监控项" class="headerlink" title="配置jmeter监控项"></a>配置jmeter监控项</h3><ol>
+<li><p>在jmeter中添加线程组、添加perfmon监听器</p>
+</li>
+<li><p>在perfmon监听器中点击“Add Row”添加监控项。每个监控项需要配置服务器ip、server agent 端口、监控项。<br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-44-30.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-44-30"></p>
+<p> Host/IP：要监控的服务器地址，可以在服务器使用命令查看：$ ip addr<br> <img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-15-54-44.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-15-54-44"></p>
+<p> port：server agent 启动的端口，默认是4444，如果修改过就填写修改过的端口。</p>
+<p> metric parameter：要监控的指标。有CPU、Disks I/O、Memory等</p>
+</li>
+</ol>
+<h3 id="开始监控"><a href="#开始监控" class="headerlink" title="开始监控"></a>开始监控</h3><p>在线程组下面添加一个http取样器，再添加一个查看结果树、固定定时器，设置循环，然后运行。查看perfmon监听器，即可看到监控指标的图示。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-04-09.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-16-04-09"></p>
+<h3 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h3><h4 id="监控指标"><a href="#监控指标" class="headerlink" title="监控指标"></a>监控指标</h4><p>各项指标可以Metric parameter设置界面找到答案。我们知道对于服务器如CPU、内存等每一个监控指标类型，都有多种数据从不同维度来体现资源使用情况，比如对于CPU，在Linux系统用top命令，就可以看idle、user、system等数据。对于PerfMon插件，可以通过Metric parameter来设置某种资源具体要收集和展示的数据，只是它的入口并不是很醒目，如下图所示，需要双击输入框后，点击最后边的按钮打开，打开的界面如图4中级红色箭头所指，虽然每种指标的具体配置项不同，但结构相同，都分为Primary Metrics、Additional Metrics等等，Primary是官方认为常用的，通常也是实际工作中更关心，更具有参考意义的指标项，Additional则是在一些特殊场景可能需要了解的指标项。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-06-15.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-16-06-15"></p>
+<ol>
+<li><p>CPU<br>对于各指标项，数值都是代表百分比，比如默认配置(combined)下在曲线图中看到某个时间的数值是30，即代表此时总的cpu使用时间占比为30%。</p>
+<p> 有两点比较有用的地方值得说明：一是在Scope区域，可以通过Per Process选项来获取指定进程的CPU使用情况，二是在CPU Cores区域，我们可以选择监控指定的单个Core。</p>
+</li>
+<li><p>Memory<br>各指标项中，usedperc(默认)和freeperc两项的数值代表与总内存的百分比，其余指标项的数值都是指内存大小，选中对应项，可以看到Metric Unit区域单位配置将变为可用，通常Mb会比较适合观察。</p>
+<p> 同样，也可以选择监控指定进程的数据</p>
+</li>
+<li><p>Disk I/O<br>各指标项中，queue(默认)的数值代表等待I/O队列长度，reads、writes分别代表每秒处理的读/写次数，readbytes、writebytes顾名思义，代表每秒读/写的数据量，单位同样在Metric Unit区域配置，通常Mb会比较适合观察。</p>
+<p> 如果有挂载多个存储设备，可以在Filesystem Filter区域指定要监控的设备。</p>
+</li>
+</ol>
+<h4 id="曲线图设置"><a href="#曲线图设置" class="headerlink" title="曲线图设置"></a>曲线图设置</h4><ol>
+<li><p>使用策略<br>如果测试场景的测试执行时间较长，采集的监控数据量比较大，为了在GUI模式查看曲线图时更方便、快捷，建议将各个监控指标项单独使用一个PerfMon监听器，从而配置不同的指标项数据存储到不同的文件中，测试执行完毕后，载入数据和数据查看都会更快。</p>
+<p> 如果预计数据量不会太大，可以以服务器为单位来划分PerfMon监听器。这样可以方便的观察到整个测试过程中，某台服务器各项资源使用情况的变化趋势。</p>
+<p> 对于分布式服务、为了方便观察各个节点的负载分布、负载变化趋势，可以考虑将同类型的节点放置到同一个PerfMon监听器，以便对比观察。</p>
+</li>
+<li><p>数值<br>当一个PerfMon监听器中展示多种指标项的数据时，为了曲线图的可观察性，插件会自动进行优化，如图5所示，我们看到在磁盘读写监控项后面有个x10，代表曲线图中展示的数值是在采集到的真实数值上放大了10倍，目的是为了保证不同数据项在同一坐标系中展示时，各项都变化趋势都能够被观察到。<br><img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-11-17.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-16-11-17"></p>
+</li>
+<li><p>曲线图配置<br>插件界面的Rows标签页可以调整要在曲线图中展示的指标项。</p>
+<p> Setting标签页中常用的配置项：<br> <img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-11-57.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-16-11-57"></p>
+<p> <strong>use relative times：</strong> 用于配置曲线图x轴表示相对时间(测试开始时为0)还是实际系统时间。</p>
+<p> <strong>Auto-zoom rows for best fit：</strong> 默认勾选，则会有上一节讲数值时提到的展示数据自动放大的功能，取消勾选则全部展示采集的实际数值。</p>
+<p> <strong>Limit number of points in row to xx points：</strong> 勾选后可以设定曲线图展示的采样点数量，我们的测试报告会有不同的角色查看，其中一些角色可能不具备也不需要对监控数据的细节理解能力，此时我们提供的监控曲线图应该是易读的，如果按照实际的所有采样点来渲染出曲线图，可能会有很多偏离趋势的噪点数据，这对于不了解的人来说可能会有很多疑惑，所以当我们有了分析结论，最后报告呈现的时候，可以考虑通过调整采样点，来让曲线图更好的展示资源使用趋势，消除其他不必要的信息。</p>
+<p> <strong>Force maximum Y axis value to xx：</strong> 实际上我更多会选择不勾选，不勾选的情况下，插件在描绘曲线图的时候，会根据数值大小自动调整Y轴最大值，以达到更佳可读性，如图，分别是不勾选，和勾选后设置最大值为100时的曲线图效果，显然图7可以更容易的观察到变化的细节。不过与上一项类似，可能在对外出具报告时，为了更少的解释说明，可能需要某个指定的数值。</p>
+<p> <img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-13-42.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-16-13-42"></p>
+<p> <img src="https://cdn.jsdelivr.net/gh/yuyong1992/picbed/image/Jmeter-%E9%80%9A%E8%BF%87PerfMon%E6%8F%92%E4%BB%B6%E7%9B%91%E6%8E%A7%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%80%A7%E8%83%BD-2020-09-10-16-13-53.png" alt="Jmeter-通过PerfMon插件监控服务器性能-2020-09-10-16-13-53"></p>
+</li>
+</ol>
+<h4 id="自定义指标"><a href="#自定义指标" class="headerlink" title="自定义指标"></a>自定义指标</h4><ol>
+<li><p>EXEC<br> 在插件界面选择指标类型时，可以看到一个EXEC选型，该选项允许我们在后面的Metric parameter中配置一个命令语句(该语句最终应该输出单个数值)，测试执行时，ServerAgent将执行该命令，同时插件将接收ServerAgent捕获的输出数值。</p>
+<p> 语法规则：EXEC所配置的语句需要按照一定的规则来填写，先是给出命令的执行程序的位置，然后将具体的命令以及命令的参数作为，命令和命令参数都需要用冒号”:”来隔开。比如/bin/sh:-c:free |grep Mem |awk ‘{pring $7}’</p>
+<ul>
+<li><p>/bin/sh，代表命令的执行程序</p>
+</li>
+<li><p>-c，即/bin/sh的-c选型，有-c选型的情况下，将从后面的字符串按一定规则解析为命令和命令参数</p>
+</li>
+<li><p>可以看到有用冒号分隔了执行程序/选型参数/命令语句</p>
+</li>
+<li><p>对于windows，也类似，如C:\Windows\System32\cmd.exe:/c:echo %RANDOM%</p>
+</li>
+</ul>
+</li>
+<li><p>TAIL<br>如同Linux的tail命令，读取文件的最后一行，用在这里，需要文件每一行只包含一个单独的数值。借助tail，我们可以通过自定义脚本监控任意指标，只需要脚本的输出满足要求即可。</p>
+<p> 显而易见，TAIL后面的参数就是配置要读取的文件的地址，测试执行时，ServerAgent将根据配置读取所在服务器的指定文件。</p>
+</li>
+</ol>
+<hr>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/性能测试/" rel="tag"><i class="fa fa-tag"></i> 性能测试</a>
+          
+            <a href="/tags/jmeter/" rel="tag"><i class="fa fa-tag"></i> jmeter</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/20/win10安装hexo的坑/" rel="next" title="win10安装hexo的坑">
+                <i class="fa fa-chevron-left"></i> win10安装hexo的坑
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/image/head_picture.jpg" alt="余永">
+            
+              <p class="site-author-name" itemprop="name">余永</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装jmeter-perfmon插件"><span class="nav-number">1.</span> <span class="nav-text">安装jmeter perfmon插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在服务器上安装serveragent代理工具"><span class="nav-number">2.</span> <span class="nav-text">在服务器上安装serveragent代理工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置jmeter监控项"><span class="nav-number">3.</span> <span class="nav-text">配置jmeter监控项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开始监控"><span class="nav-number">4.</span> <span class="nav-text">开始监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果分析"><span class="nav-number">5.</span> <span class="nav-text">结果分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#监控指标"><span class="nav-number">5.1.</span> <span class="nav-text">监控指标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#曲线图设置"><span class="nav-number">5.2.</span> <span class="nav-text">曲线图设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义指标"><span class="nav-number">5.3.</span> <span class="nav-text">自定义指标</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">
+<span>Copyright</span>
+&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">余永</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+  <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv" class="post-meta-divider">
+  本站访客数:<span id="busuanzi_value_site_uv"></span></span>
+  </div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
